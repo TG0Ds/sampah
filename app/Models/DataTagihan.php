@@ -15,6 +15,7 @@ class DataTagihan extends Model
         'due_date',
         'paid_date',
         'total_amount',
+        'paid_amount',
         'user_id',
     ];
 

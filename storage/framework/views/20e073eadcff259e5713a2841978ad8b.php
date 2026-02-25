@@ -9,19 +9,13 @@
         </a>
         <?php if(!$dataTagihan->paid_date): ?>
             <?php if(auth()->user()->role === 'warga'): ?>
-                <form action="<?php echo e(route('dataTagihan.pay', $dataTagihan->id)); ?>" method="POST" class="inline" id="pay-form">
-                    <?php echo csrf_field(); ?>
-                    <button type="button" onclick="if(confirm('Konfirmasi bayar tagihan ini?')) document.getElementById('pay-form').submit();" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Pay
-                    </button>
-                </form>
+                <a href="<?php echo e(route('dataTagihan.showPay', $dataTagihan->id)); ?>" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-credit-card mr-2"></i>Bayar
+                </a>
             <?php elseif(auth()->user()->role === 'admin'): ?>
-                <form action="<?php echo e(route('dataTagihan.pay', $dataTagihan->id)); ?>" method="POST" class="inline" id="mark-paid-form">
-                    <?php echo csrf_field(); ?>
-                    <button type="button" onclick="if(confirm('Tandai tagihan ini sebagai sudah dibayar?')) document.getElementById('mark-paid-form').submit();" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Mark as paid
-                    </button>
-                </form>
+                <a href="<?php echo e(route('dataTagihan.showPay', $dataTagihan->id)); ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-edit mr-2"></i>Tandai sebagai Sudah Dibayar
+                </a>
             <?php endif; ?>
         <?php endif; ?>
     </div>
@@ -38,8 +32,18 @@
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-600">Total Amount</label>
-                    <p class="text-lg text-gray-900"><?php echo e($dataTagihan->total_amount); ?></p>
+                    <p class="text-lg text-gray-900">Rp <?php echo e(number_format($dataTagihan->total_amount, 0, ',', '.')); ?></p>
                 </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Sudah dibayar</label>
+                    <p class="text-lg text-gray-900">Rp <?php echo e(number_format($dataTagihan->paid_amount ?? 0, 0, ',', '.')); ?></p>
+                </div>
+                <?php if(!$dataTagihan->paid_date): ?>
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Sisa</label>
+                    <p class="text-lg font-semibold text-orange-600">Rp <?php echo e(number_format(max(0, (float)$dataTagihan->total_amount - (float)($dataTagihan->paid_amount ?? 0)), 0, ',', '.')); ?></p>
+                </div>
+                <?php endif; ?>
                 <div>
                     <label class="text-sm font-medium text-gray-600">Billing Start Date</label>
                     <p class="text-lg text-gray-900"><?php echo e($dataTagihan->billing_start_date->format('d/m/Y')); ?></p>
@@ -76,4 +80,4 @@
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Games_And_Stuffs\coding\XII_pplg_1\sampah\resources\views\dataTagihan\show.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Games_And_Stuffs\coding\XII_pplg_1\sampah\resources\views/dataTagihan/show.blade.php ENDPATH**/ ?>

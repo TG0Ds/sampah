@@ -87,4 +87,4 @@
 </body>
 </html>
 
-<?php /**PATH C:\Games_And_Stuffs\coding\XII_pplg_1\sampah\resources\views\layouts\app.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Games_And_Stuffs\coding\XII_pplg_1\sampah\resources\views/layouts/app.blade.php ENDPATH**/ ?>

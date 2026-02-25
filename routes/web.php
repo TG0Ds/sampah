@@ -26,7 +26,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Define /pay routes BEFORE the resource so they are registered and matched first.
+    // Otherwise the resource's show route can take precedence and the named route may not resolve correctly.
+    Route::get('dataTagihan/{dataTagihan}/pay', [DataTagihanController::class, 'showPay'])->name('dataTagihan.showPay');
+    Route::post('dataTagihan/{dataTagihan}/pay', [DataTagihanController::class, 'processPay'])->name('dataTagihan.processPay');
     Route::resource('dataTagihan', DataTagihanController::class);
-    Route::post('dataTagihan/{id}/pay', [DataTagihanController::class, 'pay'])->name('dataTagihan.pay');
 });
 

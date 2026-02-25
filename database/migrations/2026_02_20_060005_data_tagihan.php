@@ -16,7 +16,8 @@ return new class extends Migration
             $table->date('billing_start_date');
             $table->date('due_date');
             $table->date('paid_date')->nullable();
-            $table->decimal('total_amount');
+            $table->decimal('total_amount', 15, 2);
+            $table->decimal('paid_amount', 15, 2)->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 

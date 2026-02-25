@@ -105,25 +105,45 @@ class DataTagihanController extends Controller
         return redirect()->route('dataTagihan.index')->with('success', 'Data tagihan berhasil dihapus.');
     }
 
-    public function pay(Request $request, string $id)
+    public function showPay(string $dataTagihan)
     {
-        $dataTagihan = DataTagihan::findOrFail($id);
+        $dataTagihan = DataTagihan::findOrFail($dataTagihan);
 
-        if (Auth::user()->role === 'warga') {
-            if ($dataTagihan->user_id !== Auth::id()) {
-                abort(403);
-            }
+        if (Auth::user()->role === 'warga' && $dataTagihan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('dataTagihan.pay', compact('dataTagihan'));
+    }
+
+    public function processPay(Request $request, string $dataTagihan)
+    {
+        $dataTagihan = DataTagihan::findOrFail($dataTagihan);
+
+        if (Auth::user()->role === 'warga' && $dataTagihan->user_id !== Auth::id()) {
+            abort(403);
         }
 
         if ($dataTagihan->paid_date) {
-            return redirect()->route('dataTagihan.show', $id)->with('error', 'Tagihan ini sudah dibayar.');
+            return back()->with('error', 'Tagihan ini sudah dibayar.');
         }
 
-        $dataTagihan->update(['paid_date' => now()]);
-        $message = Auth::user()->role === 'admin'
-            ? 'Tagihan ditandai sudah dibayar.'
-            : 'Pembayaran berhasil dicatat.';
+        $validated = $request->validate([
+            'pay_amount' => ['required', 'numeric', 'min:0.01'],
+        ]);
 
-        return redirect()->route('dataTagihan.show', $id)->with('success', $message);
+        $totalAmount = (float) $dataTagihan->total_amount;
+        $alreadyPaid = (float) ($dataTagihan->paid_amount ?? 0);
+        $thisPayment = (float) $validated['pay_amount'];
+        $newTotalPaid = $alreadyPaid + $thisPayment;
+
+        $dataTagihan->update(['paid_amount' => $newTotalPaid]);
+
+        if ($newTotalPaid >= $totalAmount) {
+            $dataTagihan->update(['paid_date' => now()]);
+        }
+
+        return redirect()->route('dataTagihan.show', $dataTagihan->id)
+            ->with('success', 'Pembayaran Rp ' . number_format($thisPayment, 0, ',', '.') . ' dicatat. Total dibayar: Rp ' . number_format($newTotalPaid, 0, ',', '.') . '.');
     }
 }

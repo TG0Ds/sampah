@@ -11,19 +11,13 @@
         </a>
         @if(!$dataTagihan->paid_date)
             @if(auth()->user()->role === 'warga')
-                <form action="{{ route('dataTagihan.pay', $dataTagihan->id) }}" method="POST" class="inline" id="pay-form">
-                    @csrf
-                    <button type="button" onclick="if(confirm('Konfirmasi bayar tagihan ini?')) document.getElementById('pay-form').submit();" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Pay
-                    </button>
-                </form>
+                <a href="{{ route('dataTagihan.showPay', $dataTagihan->id) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-credit-card mr-2"></i>Bayar
+                </a>
             @elseif(auth()->user()->role === 'admin')
-                <form action="{{ route('dataTagihan.pay', $dataTagihan->id) }}" method="POST" class="inline" id="mark-paid-form">
-                    @csrf
-                    <button type="button" onclick="if(confirm('Tandai tagihan ini sebagai sudah dibayar?')) document.getElementById('mark-paid-form').submit();" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Mark as paid
-                    </button>
-                </form>
+                <a href="{{ route('dataTagihan.showPay', $dataTagihan->id) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-edit mr-2"></i>Tandai sebagai Sudah Dibayar
+                </a>
             @endif
         @endif
     </div>
@@ -40,8 +34,18 @@
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-600">Total Amount</label>
-                    <p class="text-lg text-gray-900">{{ $dataTagihan->total_amount }}</p>
+                    <p class="text-lg text-gray-900">Rp {{ number_format($dataTagihan->total_amount, 0, ',', '.') }}</p>
                 </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Sudah dibayar</label>
+                    <p class="text-lg text-gray-900">Rp {{ number_format($dataTagihan->paid_amount ?? 0, 0, ',', '.') }}</p>
+                </div>
+                @if(!$dataTagihan->paid_date)
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Sisa</label>
+                    <p class="text-lg font-semibold text-orange-600">Rp {{ number_format(max(0, (float)$dataTagihan->total_amount - (float)($dataTagihan->paid_amount ?? 0)), 0, ',', '.') }}</p>
+                </div>
+                @endif
                 <div>
                     <label class="text-sm font-medium text-gray-600">Billing Start Date</label>
                     <p class="text-lg text-gray-900">{{ $dataTagihan->billing_start_date->format('d/m/Y') }}</p>

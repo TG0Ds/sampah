@@ -44,9 +44,9 @@
         </div>
         <div>
             <label for="total_amount" class="block text-sm font-medium text-gray-700">Total Amount</label>
-            <input id="total_amount" name="total_amount" type="number" step="0.01" min="0" value="{{ old('total_amount') }}" required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="0">
+            <input id="total_amount" name="total_amount" type="number" step="0.01" min="0" value="{{ old('total_amount', '100000') }}" required unit="Rp" readonly
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 placeholder-black"
+                placeholder="100000"/>
             @error('total_amount')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
